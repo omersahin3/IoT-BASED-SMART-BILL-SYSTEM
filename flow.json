@@ -1,1 +1,1695 @@
-[]
+[
+    {
+        "id": "8635ad1b.7b534",
+        "type": "tab",
+        "label": "Flow 4",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "d813ced9.b6173",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": "8086",
+        "protocol": "http",
+        "database": "smart_bill",
+        "name": "",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "1.x",
+        "url": "http://localhost:8086",
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "191b60bd.56a02f",
+        "type": "inject",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "21600",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 270,
+        "y": 1640,
+        "wires": [
+            [
+                "95987e2d.f4b1a"
+            ]
+        ]
+    },
+    {
+        "id": "9a467a0b.37a9f8",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 1440,
+        "wires": []
+    },
+    {
+        "id": "95987e2d.f4b1a",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "T",
+        "func": "T=flow.get('T');\nmsg.date = new Date();\nmsg.payload=\n    {\n        ETL:T,\n    }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 470,
+        "y": 1640,
+        "wires": [
+            [
+                "2bcaea48.fe0856"
+            ]
+        ]
+    },
+    {
+        "id": "2bcaea48.fe0856",
+        "type": "switch",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "property": "payload.ETL",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "0",
+                "vt": "num",
+                "v2": "200",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 650,
+        "y": 1640,
+        "wires": [
+            [
+                "4e2e3884.120e38"
+            ],
+            [
+                "2454cb34.e7ac14"
+            ]
+        ]
+    },
+    {
+        "id": "2454cb34.e7ac14",
+        "type": "change",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "backup",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "\"Report -->  \" & payload.ETL &\" TL Elektirk faturanız birikti.\"",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "\"Elektrik \" & \"EMERGENCY ! \" & \"Date # \" & msg.date",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "to",
+                "pt": "msg",
+                "to": "akillifatura@gmail.com",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 840,
+        "y": 1700,
+        "wires": [
+            [
+                "ac017ff3.440fb",
+                "b39aabdd.f77ad8"
+            ]
+        ]
+    },
+    {
+        "id": "4e2e3884.120e38",
+        "type": "change",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "backup",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "\"Report -->  \" & payload.ETL &\" TL Elektirk faturanız birikti.\"",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "\"Elektrik \" & \"Date # \" & msg.date",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "to",
+                "pt": "msg",
+                "to": "akillifatura@gmail.com",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 840,
+        "y": 1580,
+        "wires": [
+            [
+                "e6e3f626.dbb7d8",
+                "bbacf9a3.f0d178"
+            ]
+        ]
+    },
+    {
+        "id": "bbacf9a3.f0d178",
+        "type": "e-mail",
+        "z": "8635ad1b.7b534",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "tls": true,
+        "name": "",
+        "dname": "",
+        "x": 1050,
+        "y": 1600,
+        "wires": []
+    },
+    {
+        "id": "e6e3f626.dbb7d8",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1050,
+        "y": 1500,
+        "wires": []
+    },
+    {
+        "id": "b39aabdd.f77ad8",
+        "type": "e-mail",
+        "z": "8635ad1b.7b534",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "tls": true,
+        "name": "",
+        "dname": "",
+        "x": 1050,
+        "y": 1760,
+        "wires": []
+    },
+    {
+        "id": "ac017ff3.440fb",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1050,
+        "y": 1680,
+        "wires": []
+    },
+    {
+        "id": "1d2cc406.5112cc",
+        "type": "inject",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "4",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 230,
+        "y": 1880,
+        "wires": [
+            [
+                "2c72f53b.91b9ba"
+            ]
+        ]
+    },
+    {
+        "id": "2c72f53b.91b9ba",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "getMonth()",
+        "func": "msg.month = new Date().getMonth();\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 490,
+        "y": 1880,
+        "wires": [
+            [
+                "1c34985b.b92ee8"
+            ]
+        ]
+    },
+    {
+        "id": "5297d0c6.50b33",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "func": "flow.set('GT1',0);\nflow.set('GT2',0);\nflow.set('GT3',0);\nflow.set('T1',0);\nflow.set('T2',0);\nflow.set('T3',0);\nflow.set('Gm3',0);\nflow.set('Gdm3',0);\nmsg.payload=\n    {\n        T1Kw: flow.get('GT1'),\n        T2Kw: flow.get('GT2'),\n        T3Kw: flow.get('GT3'),\n        Totalm3: flow.get('Gm3'),\n        Totallt: flow.get('Gdm3'),\n    }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 880,
+        "y": 1920,
+        "wires": [
+            [
+                "c334371b.6b7d48"
+            ]
+        ]
+    },
+    {
+        "id": "c334371b.6b7d48",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1070,
+        "y": 1920,
+        "wires": []
+    },
+    {
+        "id": "2d6d5b7a.707b24",
+        "type": "inject",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 250,
+        "y": 520,
+        "wires": [
+            [
+                "14678df5.68c5d2"
+            ]
+        ]
+    },
+    {
+        "id": "14678df5.68c5d2",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "func": "msg.hours = new Date().getHours();\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 440,
+        "y": 520,
+        "wires": [
+            [
+                "983cfbd9.5f7438"
+            ]
+        ]
+    },
+    {
+        "id": "288e1a23.e11236",
+        "type": "switch",
+        "z": "8635ad1b.7b534",
+        "name": "T1/T2/T3 ?",
+        "property": "hours",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "6",
+                "vt": "num",
+                "v2": "16",
+                "v2t": "num"
+            },
+            {
+                "t": "btwn",
+                "v": "17",
+                "vt": "num",
+                "v2": "22",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 750,
+        "y": 520,
+        "wires": [
+            [
+                "c2415902.805838"
+            ],
+            [
+                "d30e6921.e1d548"
+            ],
+            [
+                "4095876c.c77688"
+            ]
+        ],
+        "outputLabels": [
+            "T1",
+            "T2",
+            "T3"
+        ]
+    },
+    {
+        "id": "37ada617.50b1ca",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1330,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "543dd296.e8849c",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1330,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "175de6ea.83e979",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1330,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "c2415902.805838",
+        "type": "random",
+        "z": "8635ad1b.7b534",
+        "name": "T1",
+        "low": "0",
+        "high": "1.25",
+        "inte": "false",
+        "property": "T1",
+        "x": 970,
+        "y": 440,
+        "wires": [
+            [
+                "f5d04441.a351d8"
+            ]
+        ]
+    },
+    {
+        "id": "f5d04441.a351d8",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "condition",
+        "func": "var T1=msg.T1;\nT1=Number(T1.toString().slice(0,4));\nmsg.payload=\n    {\n        T1Kwh: T1,\n    }\nflow.set('T1',T1);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1160,
+        "y": 440,
+        "wires": [
+            [
+                "37ada617.50b1ca"
+            ]
+        ]
+    },
+    {
+        "id": "341be6a.9e2ff1a",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "condition",
+        "func": "var T3=msg.T3;\nT3=Number(T3.toString().slice(0,4));\nmsg.payload=\n    {\n        T3Kwh: T3,\n    }\nflow.set('T3',T3);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1160,
+        "y": 600,
+        "wires": [
+            [
+                "175de6ea.83e979"
+            ]
+        ]
+    },
+    {
+        "id": "4095876c.c77688",
+        "type": "random",
+        "z": "8635ad1b.7b534",
+        "name": "T3",
+        "low": "0",
+        "high": "1.25",
+        "inte": "false",
+        "property": "T3",
+        "x": 970,
+        "y": 600,
+        "wires": [
+            [
+                "341be6a.9e2ff1a"
+            ]
+        ]
+    },
+    {
+        "id": "d30e6921.e1d548",
+        "type": "random",
+        "z": "8635ad1b.7b534",
+        "name": "T2",
+        "low": "0",
+        "high": "1.25",
+        "inte": "false",
+        "property": "T2",
+        "x": 970,
+        "y": 520,
+        "wires": [
+            [
+                "a7497069.fe664"
+            ]
+        ]
+    },
+    {
+        "id": "a7497069.fe664",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "condition",
+        "func": "var T2=msg.T2;\nT2=Number(T2.toString().slice(0,4));\nmsg.payload=\n    {\n        T2Kwh: T2,\n    }\nflow.set('T2',T2);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1160,
+        "y": 520,
+        "wires": [
+            [
+                "543dd296.e8849c"
+            ]
+        ]
+    },
+    {
+        "id": "983cfbd9.5f7438",
+        "type": "rbe",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "property": "hours",
+        "x": 590,
+        "y": 520,
+        "wires": [
+            [
+                "288e1a23.e11236"
+            ]
+        ]
+    },
+    {
+        "id": "85018f75.63352",
+        "type": "inject",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "3600",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 270,
+        "y": 2120,
+        "wires": [
+            [
+                "7e320cc6.a0bb94"
+            ]
+        ]
+    },
+    {
+        "id": "7e320cc6.a0bb94",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "condition",
+        "func": "GT1=flow.get('GT1');\nGT2=flow.get('GT2');\nGT3=flow.get('GT3');\nT=flow.get('T');\nif(T>=200)\n{\n    msg.payload=\n    {\n        T1Kw: flow.get('GT1'),\n        T2Kw: flow.get('GT2'),\n        T3Kw: flow.get('GT3'),\n        ETL:T,\n        ETLValue: \"high\",\n    }\n}\nelse if(T<200)\n{\n    msg.payload=\n    {\n        T1Kw: flow.get('GT1'),\n        T2Kw: flow.get('GT2'),\n        T3Kw: flow.get('GT3'),\n        ETL:T,\n        ETLValue: \"low\",\n    }\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 540,
+        "y": 2120,
+        "wires": [
+            [
+                "7bf95f02.1949",
+                "66620c.59fffdf4"
+            ]
+        ]
+    },
+    {
+        "id": "7bf95f02.1949",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 2120,
+        "wires": []
+    },
+    {
+        "id": "66620c.59fffdf4",
+        "type": "influxdb out",
+        "z": "8635ad1b.7b534",
+        "influxdb": "d813ced9.b6173",
+        "name": "ELECTRICITY_BILL",
+        "measurement": "ELECTRICITY_BILL",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "organisation",
+        "bucket": "bucket",
+        "x": 820,
+        "y": 2020,
+        "wires": []
+    },
+    {
+        "id": "d16e18bf.3623a8",
+        "type": "inject",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 250,
+        "y": 40,
+        "wires": [
+            [
+                "a1cd32ff.f2a88"
+            ]
+        ]
+    },
+    {
+        "id": "a1cd32ff.f2a88",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "func": "msg.day= new Date().getDay();\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 440,
+        "y": 40,
+        "wires": [
+            [
+                "71cec803.69e5a8"
+            ]
+        ]
+    },
+    {
+        "id": "71cec803.69e5a8",
+        "type": "rbe",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "property": "day",
+        "x": 590,
+        "y": 40,
+        "wires": [
+            [
+                "91b9335b.94339"
+            ]
+        ]
+    },
+    {
+        "id": "4de5133c.7f1e9c",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "91b9335b.94339",
+        "type": "random",
+        "z": "8635ad1b.7b534",
+        "name": "m3",
+        "low": "0",
+        "high": "10",
+        "inte": "false",
+        "property": "m3",
+        "x": 590,
+        "y": 120,
+        "wires": [
+            [
+                "57444516.d8d2ac"
+            ]
+        ]
+    },
+    {
+        "id": "57444516.d8d2ac",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "condition",
+        "func": "var m3=msg.m3;\nm3=Number(m3.toString().slice(0,4));\nmsg.payload=\n    {\n        m3d: m3,\n    }\nflow.set('m3',m3);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 780,
+        "y": 120,
+        "wires": [
+            [
+                "4de5133c.7f1e9c"
+            ]
+        ]
+    },
+    {
+        "id": "416aa90f.ee0da8",
+        "type": "inject",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 250,
+        "y": 240,
+        "wires": [
+            [
+                "65f602e8.4bd5ec"
+            ]
+        ]
+    },
+    {
+        "id": "65f602e8.4bd5ec",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "func": "msg.day2= new Date().getDay();\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 440,
+        "y": 240,
+        "wires": [
+            [
+                "cab68fdc.89b63"
+            ]
+        ]
+    },
+    {
+        "id": "cab68fdc.89b63",
+        "type": "rbe",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "property": "day2",
+        "x": 590,
+        "y": 240,
+        "wires": [
+            [
+                "ca22a9de.73e998"
+            ]
+        ]
+    },
+    {
+        "id": "ef8b3281.a8452",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "ca22a9de.73e998",
+        "type": "random",
+        "z": "8635ad1b.7b534",
+        "name": "lt",
+        "low": "0",
+        "high": "2000",
+        "inte": "true",
+        "property": "dm3",
+        "x": 590,
+        "y": 320,
+        "wires": [
+            [
+                "5f30dcf5.d379b4"
+            ]
+        ]
+    },
+    {
+        "id": "5f30dcf5.d379b4",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "condition",
+        "func": "var dm3=msg.dm3;\nmsg.payload=\n    {\n        Ltd: dm3,\n    }\nflow.set('dm3',dm3);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 780,
+        "y": 320,
+        "wires": [
+            [
+                "ef8b3281.a8452"
+            ]
+        ]
+    },
+    {
+        "id": "c16f971b.4fe118",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 510,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "feaba587.7191f8",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "Tm3",
+        "func": "var Gm3=0;\nvar Tm3=0;\nm3=flow.get('m3');\nGm3=flow.get('Gm3');\nGm3=Gm3+m3;\nTm3=Gm3*1.5678;\nTm3=Number(Tm3.toString().slice(0,4));\nflow.set('Gm3',Gm3);\nflow.set('Tm3',Tm3);\nmsg.date = new Date();\nvalue = context.get('count')||0; //context.set -- flow.set\nvalue++;\ncontext.set('count',value); //context.set -- flow.set\nmsg.payload=\n    {\n        count:value,\n        Totalm3: flow.get('Gm3'),\n        DTL:Tm3,\n    }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 410,
+        "y": 800,
+        "wires": [
+            [
+                "c16f971b.4fe118",
+                "b80f7f0f.de951"
+            ]
+        ]
+    },
+    {
+        "id": "b80f7f0f.de951",
+        "type": "switch",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "property": "payload.DTL",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "0",
+                "vt": "num",
+                "v2": "200",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 610,
+        "y": 800,
+        "wires": [
+            [
+                "7d9810af.e8226"
+            ],
+            [
+                "9225a7a9.709708"
+            ]
+        ]
+    },
+    {
+        "id": "9225a7a9.709708",
+        "type": "change",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "backup",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "\"Report -->  \" & payload.DTL &\" TL Doğalgaz faturanız birikti.\"",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "\"Doğalgaz \" & \"EMERGENCY ! \" & \"Date # \" & msg.date",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "to",
+                "pt": "msg",
+                "to": "akillifatura@gmail.com",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 800,
+        "y": 860,
+        "wires": [
+            [
+                "5ebe82dd.2f4e0c",
+                "448477e8.8e4a08"
+            ]
+        ]
+    },
+    {
+        "id": "7d9810af.e8226",
+        "type": "change",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "backup",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "\"Report -->  \" & payload.DTL &\" TL Doğalgaz faturanız birikti.\"",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "\"Doğalgaz \" & \"Date # \" & msg.date",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "to",
+                "pt": "msg",
+                "to": "akillifatura@gmail.com",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 800,
+        "y": 740,
+        "wires": [
+            [
+                "f8ac2c9a.cb012",
+                "b1b56005.b41ca"
+            ]
+        ]
+    },
+    {
+        "id": "c855b050.088b6",
+        "type": "inject",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "86400",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 230,
+        "y": 800,
+        "wires": [
+            [
+                "feaba587.7191f8"
+            ]
+        ]
+    },
+    {
+        "id": "f8ac2c9a.cb012",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 990,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "5ebe82dd.2f4e0c",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1010,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "46f4abc2.85b884",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 530,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "6411aaf9.530df4",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "lt",
+        "func": "var Gdm3=0;\nvar Tdm3=0;\ndm3=flow.get('dm3');\nGdm3=flow.get('Gdm3');\nGdm3=Gdm3+dm3;\nif(Gdm3>3000)\n{\n    \n    Tdm3=((Gdm3-3000)/1000)*4,50;\n    Tdm3=Number(Tdm3.toString().slice(0,4));\n    \n}\nflow.set('Gdm3',Gdm3);\nflow.set('Tdm3',Tdm3);\nmsg.date = new Date();\nvalue = context.get('count')||0; //context.set -- flow.set\nvalue++;\ncontext.set('count',value); //context.set -- flow.set\nmsg.payload=\n    {\n        count:value,\n        Totallt: flow.get('Gdm3'),\n        STL:Tdm3,\n    }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 430,
+        "y": 1200,
+        "wires": [
+            [
+                "46f4abc2.85b884",
+                "5eeea8f8.b882a8"
+            ]
+        ]
+    },
+    {
+        "id": "5eeea8f8.b882a8",
+        "type": "switch",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "property": "payload.STL",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "0",
+                "vt": "num",
+                "v2": "150",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 630,
+        "y": 1200,
+        "wires": [
+            [
+                "e038fc21.81de3"
+            ],
+            [
+                "ae672729.820958"
+            ]
+        ]
+    },
+    {
+        "id": "ae672729.820958",
+        "type": "change",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "backup",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "\"Report -->  \" & payload.STL &\" TL Su faturanız birikti.\"",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "\"Su \" & \"EMERGENCY ! \" & \"Date # \" & msg.date",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "to",
+                "pt": "msg",
+                "to": "akillifatura@gmail.com",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 820,
+        "y": 1260,
+        "wires": [
+            [
+                "b6fa6a57.7118f8",
+                "f31bc3a0.d5ce1"
+            ]
+        ]
+    },
+    {
+        "id": "e038fc21.81de3",
+        "type": "change",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "backup",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "\"Report -->  \" & payload.STL &\" TL Su faturanız birikti.\"",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "\"Su \" & \"Date # \" & msg.date",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "to",
+                "pt": "msg",
+                "to": "akillifatura@gmail.com",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 820,
+        "y": 1140,
+        "wires": [
+            [
+                "5fdbafb.a7dc45",
+                "8dc6b696.53a6e8"
+            ]
+        ]
+    },
+    {
+        "id": "989397ae.0043c8",
+        "type": "inject",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "86400",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 250,
+        "y": 1200,
+        "wires": [
+            [
+                "6411aaf9.530df4"
+            ]
+        ]
+    },
+    {
+        "id": "5fdbafb.a7dc45",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1010,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "b6fa6a57.7118f8",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1010,
+        "y": 1220,
+        "wires": []
+    },
+    {
+        "id": "b1b56005.b41ca",
+        "type": "e-mail",
+        "z": "8635ad1b.7b534",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "tls": true,
+        "name": "",
+        "dname": "",
+        "x": 990,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "448477e8.8e4a08",
+        "type": "e-mail",
+        "z": "8635ad1b.7b534",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "tls": true,
+        "name": "",
+        "dname": "",
+        "x": 990,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "8dc6b696.53a6e8",
+        "type": "e-mail",
+        "z": "8635ad1b.7b534",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "tls": true,
+        "name": "",
+        "dname": "",
+        "x": 1010,
+        "y": 1160,
+        "wires": []
+    },
+    {
+        "id": "f31bc3a0.d5ce1",
+        "type": "e-mail",
+        "z": "8635ad1b.7b534",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "tls": true,
+        "name": "",
+        "dname": "",
+        "x": 1010,
+        "y": 1280,
+        "wires": []
+    },
+    {
+        "id": "f72c12dd.0daf8",
+        "type": "inject",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "86400",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 270,
+        "y": 2300,
+        "wires": [
+            [
+                "ac40a2a1.742f8"
+            ]
+        ]
+    },
+    {
+        "id": "ac40a2a1.742f8",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "condition",
+        "func": "Gm3=flow.get('Gm3');\nTm3=flow.get('Tm3');\nif(Tm3>=200)\n{\n    msg.payload=\n    {\n        Totalm3: flow.get('Gm3'),\n        DTL:Tm3,\n        DTLValue: \"high\",\n    }\n}\nelse if(Tm3<200)\n{\n    msg.payload=\n    {\n        Totalm3: flow.get('Gm3'),\n        DTL:Tm3,\n        DTLValue: \"low\",\n    }\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 540,
+        "y": 2300,
+        "wires": [
+            [
+                "d8daf26e.f82b7",
+                "43f2a431.f880fc"
+            ]
+        ]
+    },
+    {
+        "id": "43f2a431.f880fc",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 2300,
+        "wires": []
+    },
+    {
+        "id": "d8daf26e.f82b7",
+        "type": "influxdb out",
+        "z": "8635ad1b.7b534",
+        "influxdb": "d813ced9.b6173",
+        "name": "NATURALGAS_BILL",
+        "measurement": "NATURALGAS_BILL",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "organisation",
+        "bucket": "bucket",
+        "x": 820,
+        "y": 2200,
+        "wires": []
+    },
+    {
+        "id": "4389344a.0a62cc",
+        "type": "inject",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "86400",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 270,
+        "y": 2480,
+        "wires": [
+            [
+                "20dcf9f7.2fb3c6"
+            ]
+        ]
+    },
+    {
+        "id": "20dcf9f7.2fb3c6",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "condition",
+        "func": "Gdm3=flow.get('Gdm3');\nTdm3=flow.get('Tdm3');\nif(Tdm3>=150)\n{\n    msg.payload=\n    {\n        Totallt: flow.get('Gdm3'),\n        STL:Tdm3,\n        STLValue: \"high\",\n    }\n}\nelse if(Tdm3<150)\n{\n    msg.payload=\n    {\n        Totallt: flow.get('Gdm3'),\n        STL:Tdm3,\n        STLValue: \"low\",\n    }\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 540,
+        "y": 2480,
+        "wires": [
+            [
+                "79f7da35.ca5474",
+                "6611c87f.0f7c98"
+            ]
+        ]
+    },
+    {
+        "id": "79f7da35.ca5474",
+        "type": "debug",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 2480,
+        "wires": []
+    },
+    {
+        "id": "6611c87f.0f7c98",
+        "type": "influxdb out",
+        "z": "8635ad1b.7b534",
+        "influxdb": "d813ced9.b6173",
+        "name": "WATER_BILL",
+        "measurement": "WATER_BILL",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "organisation",
+        "bucket": "bucket",
+        "x": 800,
+        "y": 2380,
+        "wires": []
+    },
+    {
+        "id": "3675dd90.c97432",
+        "type": "inject",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "3600",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 270,
+        "y": 1440,
+        "wires": [
+            [
+                "43b375c8.0cf47c"
+            ]
+        ]
+    },
+    {
+        "id": "43b375c8.0cf47c",
+        "type": "function",
+        "z": "8635ad1b.7b534",
+        "name": "T",
+        "func": "var GT1=0;\nvar GT2=0;\nvar GT3=0;\nvar T=0;\nT1=flow.get('T1');\nT2=flow.get('T2');\nT3=flow.get('T3');\nGT1=flow.get('GT1');\nGT2=flow.get('GT2');\nGT3=flow.get('GT3');\nGT1=GT1+T1;\nGT2=GT2+T2;\nGT3=GT3+T3;\nT=GT1*0.7195+GT2*1.0567+GT3*0.4498;\nT=Number(T.toString().slice(0,4));\nGT1=Number(GT1.toString().slice(0,4));\nGT2=Number(GT2.toString().slice(0,4));\nGT3=Number(GT3.toString().slice(0,4));\nflow.set('GT1',GT1);\nflow.set('GT2',GT2);\nflow.set('GT3',GT3);\nflow.set('T',T);\nmsg.date = new Date();\nvalue = context.get('count')||0; //context.set -- flow.set\nvalue++;\ncontext.set('count',value); //context.set -- flow.set\nmsg.payload=\n    {\n        count:value,\n        T1Kw: flow.get('GT1'),\n        T2Kw: flow.get('GT2'),\n        T3Kw: flow.get('GT3'),\n        ETL:T,\n    }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 470,
+        "y": 1440,
+        "wires": [
+            [
+                "9a467a0b.37a9f8"
+            ]
+        ]
+    },
+    {
+        "id": "1c34985b.b92ee8",
+        "type": "rbe",
+        "z": "8635ad1b.7b534",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "property": "month",
+        "x": 670,
+        "y": 1940,
+        "wires": [
+            [
+                "5297d0c6.50b33"
+            ]
+        ]
+    }
+]
