@@ -22,7 +22,6 @@ In a world where unconscious consumers are concentrated, our energy consumption 
 
 Keywords: Unconscious Consumer, Energy Consumption, Electricity, Natural gas, Water
 
-### About
-
-This is your project's README.md file. It helps users understand what your
-project does, how to use it and anything else they may need to know.
+#Node-RED
+#InfluxDB
+#Grafana
